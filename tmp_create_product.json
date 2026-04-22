@@ -1,0 +1,10 @@
+{
+  "sku": "RNG-9998",
+  "name": "Test Ring",
+  "description": "Test product",
+  "price": 1234.50,
+  "stockQty": 5,
+  "imageUrl": "",
+  "categoryId": 1
+}
+

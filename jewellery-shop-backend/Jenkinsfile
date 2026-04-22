@@ -1,0 +1,86 @@
+pipeline {
+    agent any
+    
+    environment {
+        WORKSPACE = '/workspace/jewellery-shop-backend'
+        DOCKER_IMAGE = 'jewellery-shop-backend'
+        DOCKER_TAG = 'latest'
+        AWS_REGION = 'us-east-1'
+        ECR_REPOSITORY = 'jewellery-shop-backend'
+    }
+    
+    stages {
+        stage('Setup Workspace') {
+            steps {
+                dir("${WORKSPACE}") {
+                    echo "Working in workspace: ${WORKSPACE}"
+                }
+            }
+        }
+        
+        stage('Build Maven Project') {
+            steps {
+                dir("${WORKSPACE}") {
+                    timeout(time: 10, unit: 'MINUTES') {
+                        sh 'export MAVEN_OPTS="-Xmx1024m" && ./mvnw package -DskipTests'
+                    }
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                dir("${WORKSPACE}") {
+                    script {
+                        docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}", '.')
+                    }
+                }
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                dir("${WORKSPACE}") {
+                    timeout(time: 10, unit: 'MINUTES') {
+                        sh 'export MAVEN_OPTS="-Xmx1024m" && ./mvnw test'
+                    }
+                }
+            }
+            post {
+                always {
+                    dir("${WORKSPACE}") {
+                        junit 'target/surefire-reports/*.xml'
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy to Docker Container') {
+            steps {
+                script {
+                    // Stop and remove existing container
+                    sh 'docker stop jewellery-shop-container || true'
+                    sh 'docker rm jewellery-shop-container || true'
+                    
+                    // Run new container
+                    sh """
+                        docker run -d \
+                        --name jewellery-shop-container \
+                        -p 8081:8080 \
+                        ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    """
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Deployment successful!'
+            echo 'Application is running on http://localhost:8081'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}

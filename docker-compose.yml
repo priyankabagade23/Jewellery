@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  jenkins:
+    build:
+      context: ./jenkins-docker
+      dockerfile: Dockerfile
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - C:/Users/Pratiti_user.DESKTOP-JRA45GK/Downloads/demo (1):/workspace
+    environment:
+      - JAVA_OPTS=-Xmx2048m -Xms1024m
+    mem_limit: 4g
+    networks:
+      - jenkins-network
+
+  backend:
+    build:
+      context: ./jewellery-shop-backend
+      dockerfile: Dockerfile
+    container_name: jewellery-shop-backend
+    ports:
+      - "8083:8080"
+    volumes:
+      - C:/Users/Pratiti_user.DESKTOP-JRA45GK/Downloads/demo (1)/jewellery-shop-backend:/app
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - jenkins-network
+    depends_on:
+      - jenkins
+
+volumes:
+  jenkins_home:
+  jenkins-docker-certs:
+
+networks:
+  jenkins-network:
+    driver: bridge
