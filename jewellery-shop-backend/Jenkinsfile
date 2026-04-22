@@ -1,7 +1,13 @@
 pipeline {
     agent any
     
+    triggers {
+        pollSCM('H/5 * * * *') // Poll every 5 minutes for changes
+        // Alternatively, configure GitHub webhook in Jenkins settings
+    }
+    
     environment {
+        GITHUB_REPO = 'https://github.com/priyankabagade23/Jewellery.git'
         WORKSPACE = '/workspace/jewellery-shop-backend'
         DOCKER_IMAGE = 'jewellery-shop-backend'
         DOCKER_TAG = 'latest'
@@ -10,6 +16,18 @@ pipeline {
     }
     
     stages {
+        stage('Clone from GitHub') {
+            steps {
+                dir("${WORKSPACE}") {
+                    sh """
+                        rm -rf ${WORKSPACE} || true
+                        mkdir -p ${WORKSPACE}
+                        git clone ${GITHUB_REPO} ${WORKSPACE}
+                    """
+                }
+            }
+        }
+        
         stage('Setup Workspace') {
             steps {
                 dir("${WORKSPACE}") {
