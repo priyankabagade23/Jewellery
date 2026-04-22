@@ -8,7 +8,7 @@ pipeline {
     
     environment {
         GITHUB_REPO = 'https://github.com/priyankabagade23/Jewellery.git'
-        WORKSPACE = '/workspace/jewellery-shop-backend'
+        WORKSPACE = '/var/jenkins_home/workspace/jewellery-shop-backend'
         DOCKER_IMAGE = 'jewellery-shop-backend'
         DOCKER_TAG = 'latest'
         AWS_REGION = 'us-east-1'
