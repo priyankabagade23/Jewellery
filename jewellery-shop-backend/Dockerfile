@@ -10,6 +10,7 @@ WORKDIR /app
 # Clone repository from GitHub
 RUN git clone https://github.com/priyankabagade23/Jewellery.git /tmp/jewellery
 RUN cp -r /tmp/jewellery/jewellery-shop-backend/* /app/
+RUN cp -r /tmp/jewellery/jewellery-shop-backend/.mvn /app/
 RUN rm -rf /tmp/jewellery
 
 # Make mvnw executable
