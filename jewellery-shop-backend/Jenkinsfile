@@ -27,6 +27,7 @@ pipeline {
         stage('Build Maven Project') {
             steps {
                 dir('jewellery-shop-backend') {
+                    sh 'chmod +x mvnw'
                     timeout(time: 10, unit: 'MINUTES') {
                         sh 'export MAVEN_OPTS="-Xmx1024m" && ./mvnw package -DskipTests'
                     }
