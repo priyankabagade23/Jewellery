@@ -58,6 +58,8 @@ public class DataSeeder implements CommandLineRunner {
 		this.discountRepo = discountRepo;
 	}
 
+
+
 	@Override
 	public void run(String... args) {
 		try {
