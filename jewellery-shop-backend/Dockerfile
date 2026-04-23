@@ -12,6 +12,9 @@ RUN git clone https://github.com/priyankabagade23/Jewellery.git /tmp/jewellery
 RUN cp -r /tmp/jewellery/jewellery-shop-backend/* /app/
 RUN rm -rf /tmp/jewellery
 
+# Make mvnw executable
+RUN chmod +x mvnw
+
 # Download dependencies
 RUN ./mvnw dependency:go-offline -B
 
